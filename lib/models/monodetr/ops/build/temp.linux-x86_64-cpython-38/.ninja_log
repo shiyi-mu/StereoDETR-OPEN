@@ -1,0 +1,4 @@
+# ninja log v5
+1	2324	1734673279000000000	/data3/mushiyi/smb9_msy/02-Code/05-stereo-detr/StereoDETR/lib/models/monodetr/ops/build/temp.linux-x86_64-cpython-38/data3/mushiyi/smb9_msy/02-Code/05-stereo-detr/StereoDETR/lib/models/monodetr/ops/src/cpu/ms_deform_attn_cpu.o	30e2e8729ba0270b
+1	9500	1734673286000000000	/data3/mushiyi/smb9_msy/02-Code/05-stereo-detr/StereoDETR/lib/models/monodetr/ops/build/temp.linux-x86_64-cpython-38/data3/mushiyi/smb9_msy/02-Code/05-stereo-detr/StereoDETR/lib/models/monodetr/ops/src/vision.o	527838542331915a
+1	13543	1734673290000000000	/data3/mushiyi/smb9_msy/02-Code/05-stereo-detr/StereoDETR/lib/models/monodetr/ops/build/temp.linux-x86_64-cpython-38/data3/mushiyi/smb9_msy/02-Code/05-stereo-detr/StereoDETR/lib/models/monodetr/ops/src/cuda/ms_deform_attn_cuda.o	ff9a47c360a98ea0
