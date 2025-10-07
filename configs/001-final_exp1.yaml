@@ -19,7 +19,7 @@ dataset:
   get_disparity_on_the_fly: True
   resolution_ori: [1280, 388] # [1280, 388]
   resolution_ori_check_filter: False
-  batch_size: 1
+  batch_size: 16
   use_3d_center: True
   class_merging: False
   use_dontcare: False

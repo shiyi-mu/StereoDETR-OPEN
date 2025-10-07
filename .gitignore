@@ -1,1 +1,4 @@
 outputs/*
+configs/r*
+scripts/002*
+scripts/004*

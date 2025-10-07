@@ -123,7 +123,8 @@ class Trainer(object):
             inputs = inputs.to(self.device)
             calibs = calibs.to(self.device)
             for key in targets.keys():
-                targets[key] = targets[key].to(self.device)
+                if key not in ["img_id"]:
+                    targets[key] = targets[key].to(self.device)
             img_sizes = targets['img_size_croped']
             img_sizes_ori = info['img_size_original'].to(self.device)
             img_sizes_upper = info['upper'].to(self.device)

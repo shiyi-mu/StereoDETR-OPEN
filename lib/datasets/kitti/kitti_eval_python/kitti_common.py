@@ -9,7 +9,7 @@ from skimage import io
 
 
 def get_image_index_str(img_idx):
-    return "{:06d}".format(img_idx)
+    return img_idx
 
 
 def get_kitti_info_path(idx,

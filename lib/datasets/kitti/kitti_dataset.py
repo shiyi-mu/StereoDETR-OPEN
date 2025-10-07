@@ -57,6 +57,10 @@ class CropTop(object):
              disp_P2 = disp_P2[:, upper//4:lower//4, :]
         return left_image, right_image, disp_P2
 
+def add_disparity_noise(disp, noise_ratio=0.02):
+    noise = (np.random.rand(*disp.shape) * 2 - 1) * noise_ratio
+    noisy_disp = disp * (1 + noise).astype(disp.dtype)
+    return noisy_disp
 
 class KITTI_Dataset(data.Dataset):
     def __init__(self, split, cfg):
@@ -104,7 +108,9 @@ class KITTI_Dataset(data.Dataset):
         self.drop_unkown_level = cfg.get('drop_unkown_level', False)
         self.decouple = cfg.get('decouple', False)
         self.get_depth_sample_points = cfg.get('get_depth_sample_points', True)
-
+        self.with_disparity_noise = cfg.get('with_disparity_noise', 0)
+        self.matcher_mode = cfg.get('matcher_mode', "StereoBM")
+        print(">>>mushiyi>>> self.matcher_mode>>>>> ", self.matcher_mode)
         if self.class_merging:
             self.writelist_train.extend(['Van', 'Truck'])
         if self.use_dontcare:
@@ -176,17 +182,21 @@ class KITTI_Dataset(data.Dataset):
         self.clip_2d = cfg.get('clip_2d', False)
 
     def get_image(self, idx):
-        img_file = os.path.join(self.image_dir, '%06d.png' % idx)
+        img_file = os.path.join(self.image_dir, idx + '.png')
+        if not os.path.exists(img_file):
+            img_file = img_file.replace('.png', '.jpg')
         assert os.path.exists(img_file), img_file
         return Image.open(img_file)    # (H, W, 3) RGB mode
     
     def get_image3(self, idx):
-        img3_file = os.path.join(self.image3_dir, '%06d.png' % idx)
+        img3_file = os.path.join(self.image3_dir, idx + '.png')
+        if not os.path.exists(img3_file):
+            img3_file = img3_file.replace('.png', '.jpg').replace('Camera-0', 'Camera-1')
         assert os.path.exists(img3_file)
         return Image.open(img3_file)    # (H, W, 3) RGB mode
     
     def get_disparity_P2(self, idx):
-        disp_file = os.path.join(self.disparity_dir, 'P2%06d.png' % idx)
+        disp_file = os.path.join(self.disparity_dir, 'P2' + idx + '.png')
         if not os.path.exists(disp_file):
             return None
         return Image.open(disp_file)    # (H, W, 3) RGB mode
@@ -196,6 +206,13 @@ class KITTI_Dataset(data.Dataset):
         right_image = cv2.cvtColor(np.asarray(img_right),cv2.COLOR_RGB2BGR)
         gray_image1 = cv2.cvtColor(left_image, cv2.COLOR_BGR2GRAY)
         gray_image2 = cv2.cvtColor(right_image, cv2.COLOR_BGR2GRAY)
+         # 创建匹配器
+        if self.matcher_mode == "StereoBM":
+            matcher = cv2.StereoBM_create(192, 25)
+        elif self.matcher_mode == "SGBM":
+            matcher = cv2.StereoSGBM_create(
+                numDisparities=192, blockSize=5, P1=8*3*5**2, P2=32*3*5**2
+            )
         matcher = cv2.StereoBM_create(192, 25)
         if switch_flag or flip_flag:
             gray_image1_flip = cv2.flip(gray_image1, 1)
@@ -213,25 +230,25 @@ class KITTI_Dataset(data.Dataset):
         return disparity_left
 
     def get_disparity_P3(self, idx):
-        disp_file = os.path.join(self.disparity_dir, 'P3%06d.png' % idx)
+        disp_file = os.path.join(self.disparity_dir, 'P3' + idx +'.png')
         assert os.path.exists(disp_file)
         return Image.open(disp_file)    # (H, W, 3) RGB mode
 
     def get_label(self, idx):
-        label_file = os.path.join(self.label_dir, '%06d.txt' % idx)
+        label_file = os.path.join(self.label_dir, idx +'.txt')
         assert os.path.exists(label_file), label_file
         return get_objects_from_label(label_file)
 
     def get_calib(self, idx):
-        calib_file = os.path.join(self.calib_dir, '%06d.txt' % idx)
+        calib_file = os.path.join(self.calib_dir,  idx +'.txt')
         assert os.path.exists(calib_file)
         return Calibration(calib_file)
     
 
     def eval(self, results_dir, logger):
         logger.info("==> Loading detections and GTs...")
-        img_ids = [int(id) for id in self.idx_list]
-        dt_annos = kitti.get_label_annos(results_dir)
+        img_ids = [id for id in self.idx_list]
+        dt_annos = kitti.get_label_annos(results_dir, img_ids)
         gt_annos = kitti.get_label_annos(self.label_dir, img_ids)
         test_id = {'Car': 0, 'Pedestrian':1, 'Cyclist': 2, 
                    'Van': 3,  'Person_sitting': 4, 'Truck':5}
@@ -286,7 +303,7 @@ class KITTI_Dataset(data.Dataset):
 
     def __getitem__(self, item):
         #  ============================   get inputs   ===========================
-        index = int(self.idx_list[item])  # index mapping, get real data id
+        index = self.idx_list[item]  # index mapping, get real data id
         # image loading
         img = self.get_image(index)
         if self.get_img_right:
@@ -354,7 +371,7 @@ class KITTI_Dataset(data.Dataset):
             random_mix_flag = False
             while count_num < 50:
                 count_num += 1
-                random_index = int(np.random.choice(self.idx_list))
+                random_index = np.random.choice(self.idx_list)
                 calib_temp = self.get_calib(random_index)
                 
                 if calib_temp.cu == calib.cu and calib_temp.cv == calib.cv and calib_temp.fu == calib.fu and calib_temp.fv == calib.fv:
@@ -634,7 +651,9 @@ class KITTI_Dataset(data.Dataset):
             inputs = np.concatenate([img, img3], axis=0)
         if disp_P2 is None:
             disp_P2 = np.zeros((1,72,320))
-        
+        else:
+            if self.with_disparity_noise != 0:
+                disp_P2 = add_disparity_noise(disp_P2, self.with_disparity_noise)
         targets = {
                    'calibs': calibs,
                    'indices': indices,

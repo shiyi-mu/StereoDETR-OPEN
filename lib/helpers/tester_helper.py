@@ -99,7 +99,10 @@ class Tester(object):
 
             # get corresponding calibs & transform tensor to numpy
             calibs = [self.dataloader.dataset.get_calib(index) for index in info['img_id']]
-            info = {key: val.detach().cpu().numpy() for key, val in info.items()}
+            info = {
+                    key: val.detach().cpu().numpy() if key != "img_id" else val
+                    for key, val in info.items()
+                    }
             cls_mean_size = self.dataloader.dataset.cls_mean_size
             dets, samples = decode_detections(
                     dets=dets,
@@ -129,7 +132,7 @@ class Tester(object):
 
         for img_id in results.keys():
             if self.dataset_type == 'KITTI':
-                output_path = os.path.join(output_dir, '{:06d}.txt'.format(img_id))
+                output_path = os.path.join(output_dir, f'{img_id}.txt')
             else:
                 os.makedirs(os.path.join(output_dir, self.dataloader.dataset.get_sensor_modality(img_id)), exist_ok=True)
                 output_path = os.path.join(output_dir,
@@ -151,7 +154,7 @@ class Tester(object):
 
         for img_id in results.keys():
             if self.dataset_type == 'KITTI':
-                output_path = os.path.join(output_dir, '{:06d}.txt'.format(img_id))
+                output_path = os.path.join(output_dir, f'{img_id}.txt')
             else:
                 os.makedirs(os.path.join(output_dir, self.dataloader.dataset.get_sensor_modality(img_id)), exist_ok=True)
                 output_path = os.path.join(output_dir,
