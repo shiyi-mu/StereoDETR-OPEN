@@ -1,4 +1,11 @@
-# StereoDETR
+# StereoDETR 🚀
+
+**🎉 Our paper has been ACCEPTED by *IEEE Transactions on Circuits and Systems for Video Technology (TCSVT)!***
+
+**StereoDETR** is the **first stereo 3D detection framework that runs faster than monocular 3D detectors**, proving that binocular models can be both efficient and powerful.
+
+📄 **Paper:**  
+[StereoDETR: Stereo-based Transformer for 3D Object Detection](https://arxiv.org/abs/2511.18788)
 
 ## install
 Follow [MonoDETR](https://github.com/ZrrSkywalker/MonoDETR)   
