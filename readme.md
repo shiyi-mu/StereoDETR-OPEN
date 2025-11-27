@@ -7,6 +7,23 @@
 📄 **Paper:**  
 [StereoDETR: Stereo-based Transformer for 3D Object Detection](https://arxiv.org/abs/2511.18788)
 
+## 🚀 Speed–Accuracy Comparison
+
+StereoDETR achieves **higher accuracy** while running **faster than monocular 3D detectors**.
+
+<p align="center">
+  <img src="assets/speed_accuracy.png" alt="Speed–Accuracy comparison" width="70%">
+</p>
+
+*StereoDETR vs. previous monocular and stereo 3D detectors.*
+## 🏗️ Architecture
+
+<p align="center">
+  <img src="assets/fig3_pipeline.png" alt="StereoDETR architecture" width="78%">
+</p>
+
+*Overall architecture of StereoDETR.*
+
 ## install
 Follow [MonoDETR](https://github.com/ZrrSkywalker/MonoDETR)   
 
