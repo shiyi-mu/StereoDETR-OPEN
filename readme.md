@@ -7,6 +7,8 @@
 📄 **Paper:**  
 [StereoDETR: Stereo-based Transformer for 3D Object Detection](https://arxiv.org/abs/2511.18788)
 
+[中文知乎解读](https://zhuanlan.zhihu.com/p/1977105087416538258)
+
 ## 🚀 Speed–Accuracy Comparison
 
 StereoDETR achieves **higher accuracy** while running **faster than monocular 3D detectors**.
