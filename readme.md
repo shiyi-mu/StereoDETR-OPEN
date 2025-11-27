@@ -18,6 +18,19 @@ StereoDETR achieves **higher accuracy** while running **faster than monocular 3D
 </p>
 
 *StereoDETR vs. previous monocular and stereo 3D detectors.*
+## 📊 KITTI Online Benchmark Results
+
+StereoDETR is officially evaluated on the KITTI 3D Object Detection benchmark.
+
+🔗 **Online result:**  
+[KITTI Test Server](https://www.cvlibs.net/datasets/kitti/eval_object_detail.php?&result=f420b07724154b8ac9e29505b414c656cb5f7610)
+
+*Official KITTI online test server result.*
+<p align="center">
+  <img src="assets/kitti_online_result.png" alt="KITTI online benchmark scores" width="75%">
+</p>
+
+
 ## 🏗️ Architecture
 
 <p align="center">
