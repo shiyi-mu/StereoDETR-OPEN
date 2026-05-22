@@ -68,6 +68,8 @@ cd ../../../..
 ```
 
 ##  train model
+Dataset train val splits and preprocess for kITTI are same as YOLOStereo3D.
+
 ```bash
 bash scripts/001-eval-final_exp1.sh
 ```
